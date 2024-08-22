@@ -153,28 +153,37 @@
 
     document.getElementById('register-form').addEventListener('submit', (e) => {
     e.preventDefault();
-
-    // Get the entered username and password
-    const username = document.getElementById('register-username').value;
-    const password = document.getElementById('register-password').value;
+    let canReg = false;
+    
+    if canReg === true {
+        
+    
+       // Get the entered username and password
+       const username = document.getElementById('register-username').value;
+       const password = document.getElementById('register-password').value;
 
     
-    const hashedUsername = simpleHash(username);
-    const hashedPassword = simpleHash(password);
+       const hashedUsername = simpleHash(username);
+       const hashedPassword = simpleHash(password);
 
-    // Check if the username already exists
-    if (trustnames.includes(hashedUsername)) {
+       // Check if the username already exists
+       if (trustnames.includes(hashedUsername)) {
         alert('Username already taken.');
-    } else {
+       } else {
         
-        trustnames.push(hashedUsername);
-        passwords.push(hashedPassword);
+           trustnames.push(hashedUsername);
+           passwords.push(hashedPassword);
 
-        alert('Registration successful! Please login.');
-        // Reset form and switch to login page
-        document.getElementById('register-form').reset();
-        document.getElementById('toggleLogin').click();  // Example of switching forms
-    }
+           alert('Registration successful! Please login.');
+           // Reset form and switch to login page
+           document.getElementById('register-form').reset();
+           document.getElementById('toggleLogin').click();  // Example of switching forms
+       }
+   }
+   else {
+       alert("Can't Register Now!")
+   }
+        
 });
 </script>
 
