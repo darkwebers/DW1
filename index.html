@@ -147,22 +147,37 @@
             });
     });
 
-    registerForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = document.getElementById('register-username').value;
-        const password = document.getElementById('register-password').value;
+    // Add an event listener to the registration form
+// Add an event listener to the registration form
+registerForm.addEventListener('submit', (e) => {
+    e.preventDefault(); // Prevent default form submission
 
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-                alert('Registration successful! Please login.');
-                registerForm.reset();
-                toggleLogin.click(); // Переключение на форму логина
-            })
-            .catch((error) => {
-                console.error("Registration failed:", error.message);
-                alert('Failed to register. Try again.');
-            });
-    });
+    // Get the email and password values from the form
+    const email = document.getElementById('register-username').value;
+    const password = document.getElementById('register-password').value;
+
+    // Check if the email ends with '@dw1.com'
+    if (!email.endsWith('@dw1.com')) {
+        alert("Registration is allowed only with email addresses ending in @dw1.com.");
+        return; // Stop further execution
+    }
+
+    // Proceed with Firebase Authentication registration
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Registration successful
+            alert('Registration successful! Please login.');
+            registerForm.reset();
+            toggleLogin.click(); // Switch to login form
+        })
+        .catch((error) => {
+            // Handle errors
+            console.error("Registration failed:", error.message);
+            alert('Failed to register. Try again.');
+        });
+});
+
+
 </script>
 
 </body>
