@@ -68,6 +68,26 @@
             text-decoration: underline;
         }
     </style>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-analytics.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvbyrYWPywxE1NS05EH6t8rLAwSPWX3F0",
+            authDomain: "dw1test.firebaseapp.com",
+            projectId: "dw1test",
+            storageBucket: "dw1test.appspot.com",
+            messagingSenderId: "307765219744",
+            appId: "1:307765219744:web:e5cf941d8a605ef78614c5",
+            measurementId: "G-D990MJ2HZM"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const analytics = firebase.getAnalytics(app);
+        const auth = firebase.getAuth(app);
+    </script>
 </head>
 <body>
 
@@ -111,80 +131,38 @@
         formTitle.innerText = 'Login';
     });
 
-    
-    function simpleHash(text) {
-        let hashValue = 0;
-        for (let i = 0; i < text.length; i++) {
-            hashValue = hashValue * 31 + text.charCodeAt(i);
-        }
-        return hashValue;
-    }
-
-    
-    let trustnames = [2968769750];  
-    let passwords = [110182];    
-
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const username = document.getElementById('login-username').value;
-        const pass = document.getElementById('login-password').value;
+        const email = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
 
-        const computed_hash = simpleHash(username);
-        const computed_hash2 = simpleHash(pass);
-
-        if (trustnames.includes(computed_hash)) {
-            if (passwords.includes(computed_hash2)) {
+        firebase.signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
                 alert('Login successful!');
-
-                sessionStorage.setItem('isLoggedIn', 'true');
-                sessionStorage.setItem('username', username);
-                sessionStorage.setItem('password', pass);
-
-                window.location.href = 'homepage.html';
-            } else {
-                sessionStorage.setItem('isLoggedIn', 'false');
+                window.location.href = 'homepage.html'; // Перенаправление на защищённую страницу
+            })
+            .catch((error) => {
+                console.error("Login failed:", error.message);
                 alert('Invalid username or password.');
-            }
-        } else {
-            sessionStorage.setItem('isLoggedIn', 'false');
-            alert('Invalid username or password.');
-        }
+            });
     });
 
-    document.getElementById('register-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    let canReg = false;
-    
-    if (canReg === true) {
-        
-    
-       // Get the entered username and password
-       const username = document.getElementById('register-username').value;
-       const password = document.getElementById('register-password').value;
+    registerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('register-username').value;
+        const password = document.getElementById('register-password').value;
 
-    
-       const hashedUsername = simpleHash(username);
-       const hashedPassword = simpleHash(password);
-
-       // Check if the username already exists
-       if (trustnames.includes(hashedUsername)) {
-        alert('Username already taken.');
-       } else {
-        
-           trustnames.push(hashedUsername);
-           passwords.push(hashedPassword);
-
-           alert('Registration successful! Please login.');
-           // Reset form and switch to login page
-           document.getElementById('register-form').reset();
-           document.getElementById('toggleLogin').click();  // Example of switching forms
-       }
-}
-else {
-    alert("Can't Register Now!")
-}
-        
-});
+        firebase.createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                alert('Registration successful! Please login.');
+                registerForm.reset();
+                toggleLogin.click(); // Переключение на форму логина
+            })
+            .catch((error) => {
+                console.error("Registration failed:", error.message);
+                alert('Failed to register. Try again.');
+            });
+    });
 </script>
 
 </body>
