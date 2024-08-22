@@ -77,6 +77,36 @@
             display: block;
         }
     </style>
+    <!-- Подключаем Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvbyrYWPywxE1NS05EH6t8rLAwSPWX3F0",
+            authDomain: "dw1test.firebaseapp.com",
+            projectId: "dw1test",
+            storageBucket: "dw1test.appspot.com",
+            messagingSenderId: "307765219744",
+            appId: "1:307765219744:web:e5cf941d8a605ef78614c5",
+            measurementId: "G-D990MJ2HZM"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Monitor authentication state
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                console.log('User is logged in:', user.email);
+                // The user is logged in, proceed with loading the page
+            } else {
+                console.log('No user is logged in.');
+                alert('Please log in to access this page.');
+                window.location.href = 'index.html'; // Redirect to login page if not logged in
+            }
+        });
+    </script>
 </head>
 <body>
 
@@ -139,51 +169,22 @@
         const forumSection = document.getElementById('forum');
 
         homeLink.addEventListener('click', () => {
-        if (sessionStorage.getItem('isLoggedIn') === 'true') {
             homeSection.classList.add('active');
             shopSection.classList.remove('active');
             forumSection.classList.remove('active');
-        } else {
-            alert('Please log in to access the homepage.');
-            window.location.href = 'login.html'; // Redirect to login page if not logged in
-        }
         });
 
         forumLink.addEventListener('click', () => {
-        if (sessionStorage.getItem('isLoggedIn') === 'true') {
-           forumSection.classList.add('active');
-           homeSection.classList.remove('active');
-           shopSection.classList.remove('active');
-        } else {
-           alert('Please log in to access the forum.');
-           window.location.href = 'login.html'; // Redirect to login page if not logged in
-        }
+            forumSection.classList.add('active');
+            homeSection.classList.remove('active');
+            shopSection.classList.remove('active');
         });
 
         shopLink.addEventListener('click', () => {
-        if (sessionStorage.getItem('isLoggedIn') === 'true') {
-           shopSection.classList.add('active');
-           homeSection.classList.remove('active');
-           forumSection.classList.remove('active');
-        } else {
-           alert('Please log in to access the shop.');
-           window.location.href = 'login.html'; // Redirect to login page if not logged in
-        }
+            shopSection.classList.add('active');
+            homeSection.classList.remove('active');
+            forumSection.classList.remove('active');
         });
-
-
-        window.addEventListener('load', () => {
-        const isLoggedIn = sessionStorage.getItem('isLoggedIn');
-        if (isLoggedIn === 'true') {
-           homeLink.click(); // Automatically go to home if logged in
-        } else {
-           homeLink.click();
-           homeSection.classList.remove('active');
-           alert("No Permissions to go here!!!");
-           window.location.href = 'index.html';
-        }
-        });
-
     </script>
 
 </body>
