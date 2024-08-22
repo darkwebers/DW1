@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login or Register</title>
+    <title>DW1 Login Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -110,7 +110,7 @@
         formTitle.innerText = 'Login';
     });
 
-    // Hashing function in JavaScript
+    
     function simpleHash(text) {
         let hashValue = 0;
         for (let i = 0; i < text.length; i++) {
@@ -119,9 +119,9 @@
         return hashValue;
     }
 
-    // Simulate backend response with hardcoded values for trustuname and password hashes
-    const trustuname = 2968769750;  // Replace with the actual trusted username hash
-    const password = 110182;    // Replace with the actual trusted password hash
+    
+    let trustnames = [2968769750];  
+    let passwords = [110182];    
 
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -131,8 +131,8 @@
         const computed_hash = simpleHash(username);
         const computed_hash2 = simpleHash(pass);
 
-        if (computed_hash === trustuname) {
-            if (computed_hash2 === password) {
+        if (computed_hash in trustnames) {
+            if (computed_hash2 in passwords) {
                 alert('Login successful!');
             } else {
                 alert('Invalid password.');
@@ -142,21 +142,31 @@
         }
     });
 
-    registerForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const username = document.getElementById('register-username').value;
-        const pass = document.getElementById('register-password').value;
+    document.getElementById('register-form').addEventListener('submit', (e) => {
+    e.preventDefault();
 
-        const userExists = users.some(user => simpleHash(user.username) === simpleHash(username));
-        if (userExists) {
-            alert('Username already taken.');
-        } else {
-            users.push({ username, password: pass });
-            alert('Registration successful! Please login.');
-            registerForm.reset();
-            toggleLogin.click();
-        }
-    });
+    // Get the entered username and password
+    const username = document.getElementById('register-username').value;
+    const password = document.getElementById('register-password').value;
+
+    
+    const hashedUsername = simpleHash(username);
+    const hashedPassword = simpleHash(password);
+
+    // Check if the username already exists
+    if (trustnames.includes(hashedUsername)) {
+        alert('Username already taken.');
+    } else {
+        
+        trustnames.push(hashedUsername);
+        passwords.push(hashedPassword);
+
+        alert('Registration successful! Please login.');
+        // Reset form and switch to login page
+        document.getElementById('register-form').reset();
+        document.getElementById('toggleLogin').click();  // Example of switching forms
+    }
+});
 </script>
 
 </body>
