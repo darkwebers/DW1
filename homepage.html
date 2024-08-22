@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="DW1icon.png" type="image/png">
     <title>Homepage with Shop</title>
     <style>
         /* General Styles */
@@ -84,7 +85,7 @@
             <ul>
                 <li><a href="#" id="home-link">Home</a></li>
                 <li><a href="#" id="shop-link">Shop</a></li>
-                <li><a href="index.html">Login</a></li> <!-- Link to your login page -->
+                <li><a href="#" id="forum-link">Forum</a></li> <!-- Link to your login page -->
             </ul>
         </nav>
     </header>
@@ -93,6 +94,11 @@
         <!-- Home Section -->
         <section id="home" class="active">
             <h1>Welcome to Our Dark-Themed Site</h1>
+            <p>This is a modern, dark-themed homepage with a clean design.</p>
+        </section>
+
+        <section id="forum" class="hidden">
+            <h1>Welcome to Forum</h1>
             <p>This is a modern, dark-themed homepage with a clean design.</p>
         </section>
 
@@ -127,18 +133,38 @@
         // Navigation
         const homeLink = document.getElementById('home-link');
         const shopLink = document.getElementById('shop-link');
+        const forumLink = document.getElementById('forum-link');
         const homeSection = document.getElementById('home');
         const shopSection = document.getElementById('shop');
+        const forumSection = document.getElementById('forum');
 
         homeLink.addEventListener('click', () => {
-            homeSection.classList.add('active');
-            shopSection.classList.remove('active');
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                homeSection.classList.add('active');
+                shopSection.classList.remove('active');
+                forumSection.classList.remove('active');
+            } else {
+                alert('Please log in to access the homepage.');
+                window.location.href = 'login.html'; // Redirect to login page if not logged in
+            }
+        });
+
+        forumLink.addEventListener('click', () => {
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                forumSection.classList.add('active');
+                homeSection.classList.remove('active');
+                shopSection.classList.remove('active');
+            } else {
+                alert('Please log in to access the forum.');
+                window.location.href = 'login.html'; // Redirect to login page if not logged in
+            }
         });
 
         shopLink.addEventListener('click', () => {
             if (localStorage.getItem('isLoggedIn') === 'true') {
                 shopSection.classList.add('active');
                 homeSection.classList.remove('active');
+                forumSection.classList.remove('active');
             } else {
                 alert('Please log in to access the shop.');
                 window.location.href = 'login.html'; // Redirect to login page if not logged in
