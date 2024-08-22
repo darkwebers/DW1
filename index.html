@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="DW1icon.png" type="image/png">
     <title>DW1 Login Page</title>
     <style>
         body {
@@ -131,14 +132,19 @@
         const computed_hash = simpleHash(username);
         const computed_hash2 = simpleHash(pass);
 
-        if (computed_hash in trustnames) {
-            if (computed_hash2 in passwords) {
+        if (trustnames.includes(computed_hash)) {
+            if (passwords.includes(computed_hash2)) {
                 alert('Login successful!');
+
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', username);
+
+                window.location.href = 'homepage.html';
             } else {
-                alert('Invalid password.');
+                alert('Invalid username or password.');
             }
         } else {
-            alert('Invalid username.');
+            alert('Invalid username or password.');
         }
     });
 
