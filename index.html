@@ -136,14 +136,17 @@
             if (passwords.includes(computed_hash2)) {
                 alert('Login successful!');
 
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('username', username);
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('username', username);
+                sessionStorage.setItem('password', pass);
 
                 window.location.href = 'homepage.html';
             } else {
+                sessionStorage.setItem('isLoggedIn', 'false');
                 alert('Invalid username or password.');
             }
         } else {
+            sessionStorage.setItem('isLoggedIn', 'false');
             alert('Invalid username or password.');
         }
     });
