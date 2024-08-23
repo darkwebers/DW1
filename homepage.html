@@ -194,11 +194,11 @@
         });
 
         window.onload = function() {
-    const postForm = document.getElementById('post-form');
-    const postsContainer = document.getElementById('posts-container');
+            const postForm = document.getElementById('post-form');
+            const postsContainer = document.getElementById('posts-container');
 
     // Function to display posts
-    function displayPosts(snapshot) {
+           function displayPosts(snapshot) {
         postsContainer.innerHTML = '';
         
         snapshot.forEach(postSnapshot => {
@@ -223,7 +223,7 @@
         
         const title = document.getElementById('post-title').value;
         const content = document.getElementById('post-content').value;
-        const userName = document.getElementById('user-name').value;
+        const userName = document.getElementById('user-name').textContent;
 
         if (title && content && userName) {
             database.ref('posts').push({
@@ -278,7 +278,6 @@
             <form id="post-form" class="post-form">
                 <input type="text" id="post-title" placeholder="Post Title" required>
                 <textarea id="post-content" rows="4" placeholder="Post Content" required></textarea>
-                <input type="text" id="user-name" placeholder="Your Name" required>
                 <button type="submit">Post</button>
             </form>
         </section>
