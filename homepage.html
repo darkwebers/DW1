@@ -99,7 +99,7 @@
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 console.log('User is logged in:', user.email);
-                homeSection.click();
+                homeLink.click();
                 // The user is logged in, proceed with loading the page
             } else {
                 console.log('No user is logged in.');
