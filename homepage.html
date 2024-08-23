@@ -84,7 +84,6 @@
             position: relative;
             display: inline-block; /* Ensures dropdown is positioned relative to this */
         }
-
         #profile-link:hover {
             color: #000000;
         }
@@ -99,7 +98,6 @@
             top: 100%; /* Position it directly below the profile-link */
             left: 0;   /* Align it to the left edge of the profile-link */
         }
-
         .dropdown-content a, .dropdown-content button {
             color: black;
             padding: 12px 16px;
@@ -111,19 +109,53 @@
             width: 100%;
             cursor: pointer;
         }
-
         .dropdown-content a:hover, .dropdown-content button:hover {
             background-color: #ddd;
         }
-
         /* Show the dropdown menu when hovering */
         #profile-link:hover .dropdown-content {
             display: block;
+        }
+        /* Forum Styles */
+        .forum-post {
+            background-color: #2c2c2c;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        .forum-post h3 {
+            margin: 0;
+        }
+        .forum-post p {
+            margin: 5px 0 0;
+        }
+        .post-form {
+            margin-top: 20px;
+        }
+        .post-form input, .post-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 4px;
+        }
+        .post-form button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        .post-form button:hover {
+            background-color: #0056b3;
         }
     </style>
     <!-- Подключаем Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -138,6 +170,7 @@
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
         // Monitor authentication state
         firebase.auth().onAuthStateChanged((user) => {
@@ -159,6 +192,50 @@
                 window.location.href = 'index.html'; // Redirect to login page if not logged in
             }
         });
+
+        window.onload = function() {
+            const postForm = document.getElementById('post-form');
+            const postsContainer = document.getElementById('posts-container');
+
+            // Function to display posts
+            function displayPosts(snapshot) {
+                postsContainer.innerHTML = '';
+                snapshot.forEach(postSnapshot => {
+                    const post = postSnapshot.val();
+                    const postElement = document.createElement('div');
+                    postElement.className = 'forum-post';
+                    postElement.innerHTML = `
+                        <h3>${post.title}</h3>
+                        <p>${post.content}</p>
+                    `;
+                    postsContainer.appendChild(postElement);
+                });
+            }
+
+            // Load posts
+            database.ref('posts').on('value', displayPosts);
+
+            // Submit new post
+            postForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const title = document.getElementById('post-title').value;
+                const content = document.getElementById('post-content').value;
+
+                if (title && content) {
+                    database.ref('posts').push({
+                        title: title,
+                        content: content
+                    }).then(() => {
+                        document.getElementById('post-title').value = '';
+                        document.getElementById('post-content').value = '';
+                    }).catch(error => {
+                        console.error('Error posting message:', error);
+                    });
+                } else {
+                    alert('Please enter both title and content.');
+                }
+            });
+        };
     </script>
 </head>
 <body>
@@ -170,13 +247,12 @@
                 <li><a href="#" id="shop-link">Shop</a></li>
                 <li><a href="#" id="forum-link">Forum</a></li> 
                 <li id="profile-link">
-                <span id="user-name">Name</span>
-                <div class="dropdown-content">
-                     <button id="change-pass-button">Change Password</button>
-                     <button id="logout-button">Log Out</button>
-                </div>
+                    <span id="user-name">Name</span>
+                    <div class="dropdown-content">
+                        <button id="change-pass-button">Change Password</button>
+                        <button id="logout-button">Log Out</button>
+                    </div>
                 </li>
-                <li><button id="logout-button" style="display:none;">Log Out</button></li>
             </ul>
         </nav>
     </header>
@@ -191,6 +267,12 @@
         <section id="forum" class="hidden">
             <h1>Welcome to Forum</h1>
             <p>Here you can chat with others.</p>
+            <div id="posts-container"></div>
+            <form id="post-form" class="post-form">
+                <input type="text" id="post-title" placeholder="Post Title" required>
+                <textarea id="post-content" rows="4" placeholder="Post Content" required></textarea>
+                <button type="submit">Post</button>
+            </form>
         </section>
 
         <!-- Shop Section -->
