@@ -154,7 +154,7 @@
             background-color: #0056b3;
         }
     </style>
-    <!-- Подключаем Firebase SDKs -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
@@ -174,79 +174,103 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Monitor authentication state
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                console.log('User is logged in:', user.email);
-
-                // Extract the user's name from their email
-                const email = user.email;
-                const name = email.substring(0, email.indexOf('@'));
-
-                // Capitalize the first letter of the name and update the profile link
-                document.getElementById('user-name').textContent = name.charAt(0).toUpperCase() + name.slice(1);
-
-                // Simulate clicking the home link
-                homeLink.click();
-            } else {
-                console.log('No user is logged in.');
-                alert('Please log in to access this page.');
-                window.location.href = 'index.html'; // Redirect to login page if not logged in
-            }
-        });
+        // Function to display posts
+        function displayPosts(snapshot) {
+            const postsContainer = document.getElementById('posts-container');
+            postsContainer.innerHTML = '';
+            
+            snapshot.forEach(postSnapshot => {
+                const post = postSnapshot.val();
+                const postElement = document.createElement('div');
+                postElement.className = 'forum-post';
+                postElement.innerHTML = `
+                    <h3>${post.title}</h3>
+                    <p>${post.content}</p>
+                    <p><strong>Posted by:</strong> ${post.name}</p>
+                `;
+                postsContainer.appendChild(postElement);
+            });
+        }
 
         window.onload = function() {
             const postForm = document.getElementById('post-form');
-            const postsContainer = document.getElementById('posts-container');
 
-    // Function to display posts
-           function displayPosts(snapshot) {
-           postsContainer.innerHTML = '';
-        
-        snapshot.forEach(postSnapshot => {
-            const post = postSnapshot.val();
-            const postElement = document.createElement('div');
-            postElement.className = 'forum-post';
-            postElement.innerHTML = `
-                <h3>${post.title}</h3>
-                <p>${post.content}</p>
-                <p><strong>Posted by:</strong> ${post.name}</p> <!-- Added name display -->
-            `;
-            postsContainer.appendChild(postElement);
-        });
-         }
+            // Load posts
+            database.ref('posts').on('value', displayPosts);
 
-    }
+            // Submit new post
+            postForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const title = document.getElementById('post-title').value;
+                const content = document.getElementById('post-content').value;
+                const userName = document.getElementById('user-name').textContent;
 
-    // Load posts
-    database.ref('posts').on('value', displayPosts);
-
-    // Submit new post
-    postForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        
-        const title = document.getElementById('post-title').value;
-        const content = document.getElementById('post-content').value;
-        const userName = document.getElementById('user-name').textContent;
-
-        if (title && content && userName) {
-            database.ref('posts').push({
-                title: title,
-                content: content,
-                name: userName
-            }).then(() => {
-                document.getElementById('post-title').value = '';
-                document.getElementById('post-content').value = '';
-                document.getElementById('user-name').value = '';
-            }).catch(error => {
-                console.error('Error posting message:', error);
+                if (title && content && userName) {
+                    database.ref('posts').push({
+                        title: title,
+                        content: content,
+                        name: userName
+                    }).then(() => {
+                        document.getElementById('post-title').value = '';
+                        document.getElementById('post-content').value = '';
+                    }).catch(error => {
+                        console.error('Error posting message:', error);
+                    });
+                } else {
+                    alert('Please enter a title, content, and your name.');
+                }
             });
-        } else {
-            alert('Please enter a title, content, and your name.');
-        }
-    });
-        
+        };
 
+        // Navigation event listeners
+        const homeLink = document.getElementById('home-link');
+        const shopLink = document.getElementById('shop-link');
+        const forumLink = document.getElementById('forum-link');
+        const homeSection = document.getElementById('home');
+        const shopSection = document.getElementById('shop');
+        const forumSection = document.getElementById('forum');
+
+        homeLink.addEventListener('click', () => {
+            homeSection.classList.add('active');
+            shopSection.classList.remove('active');
+            forumSection.classList.remove('active');
+        });
+
+        forumLink.addEventListener('click', () => {
+            forumSection.classList.add('active');
+            homeSection.classList.remove('active');
+            shopSection.classList.remove('active');
+        });
+
+        shopLink.addEventListener('click', () => {
+            shopSection.classList.add('active');
+            homeSection.classList.remove('active');
+            forumSection.classList.remove('active');
+        });
+
+        document.getElementById('logout-button').addEventListener('click', () => {
+            firebase.auth().signOut().then(() => {
+                console.log('User signed out.');
+                window.location.href = 'index.html'; // Redirect to login page after logout
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
+        });
+
+        document.getElementById('change-pass-button').addEventListener('click', () => {
+            const newPassword = prompt('Enter your new password:');
+            if (newPassword) {
+                const user = firebase.auth().currentUser;
+
+                user.updatePassword(newPassword).then(() => {
+                    alert('Password updated successfully.');
+                }).catch((error) => {
+                    console.error('Error updating password:', error);
+                    alert('Failed to update password. Please try again.');
+                });
+            }
+        });
     </script>
 </head>
 <body>
@@ -260,7 +284,7 @@
                 <li id="profile-link">
                     <span id="user-name">Name</span>
                     <div class="dropdown-content">
-                        <button id="change-pass-button">Change Password</button>
+                         <button id="change-pass-button">Change Password</button>
                         <button id="logout-button">Log Out</button>
                     </div>
                 </li>
@@ -312,57 +336,6 @@
     <footer>
         <p>&copy; 2024 DW1. All rights reserved.</p>
     </footer>
-
-    <script>
-        // Navigation
-        const homeLink = document.getElementById('home-link');
-        const shopLink = document.getElementById('shop-link');
-        const forumLink = document.getElementById('forum-link');
-        const homeSection = document.getElementById('home');
-        const shopSection = document.getElementById('shop');
-        const forumSection = document.getElementById('forum');
-
-        homeLink.addEventListener('click', () => {
-            homeSection.classList.add('active');
-            shopSection.classList.remove('active');
-            forumSection.classList.remove('active');
-        });
-
-        forumLink.addEventListener('click', () => {
-            forumSection.classList.add('active');
-            homeSection.classList.remove('active');
-            shopSection.classList.remove('active');
-        });
-
-        shopLink.addEventListener('click', () => {
-            shopSection.classList.add('active');
-            homeSection.classList.remove('active');
-            forumSection.classList.remove('active');
-        });
-
-        document.getElementById('logout-button').addEventListener('click', () => {
-            firebase.auth().signOut().then(() => {
-                console.log('User signed out.');
-                window.location.href = 'index.html'; // Redirect to login page after logout
-            }).catch((error) => {
-                console.error('Error signing out:', error);
-            });
-        });
-
-        document.getElementById('change-pass-button').addEventListener('click', () => {
-            const newPassword = prompt('Enter your new password:');
-            if (newPassword) {
-                const user = firebase.auth().currentUser;
-
-                user.updatePassword(newPassword).then(() => {
-                    alert('Password updated successfully.');
-                }).catch((error) => {
-                    console.error('Error updating password:', error);
-                    alert('Failed to update password. Please try again.');
-                });
-            }
-        });
-    </script>
 
 </body>
 </html>
