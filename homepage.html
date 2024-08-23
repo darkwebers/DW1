@@ -76,6 +76,15 @@
         .active {
             display: block;
         }
+        #profile-link {
+            color: blue;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        #profile-link:hover {
+            color: darkblue;
+        }
     </style>
     <!-- Подключаем Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
@@ -99,8 +108,16 @@
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 console.log('User is logged in:', user.email);
+
+                // Extract the user's name from their email
+                const email = user.email;
+                const name = email.substring(0, email.indexOf('@'));
+
+                // Capitalize the first letter of the name and update the profile link
+                document.getElementById('profile-link').textContent = name.charAt(0).toUpperCase() + name.slice(1);
+
+                // Simulate clicking the home link
                 homeLink.click();
-                // The user is logged in, proceed with loading the page
             } else {
                 console.log('No user is logged in.');
                 alert('Please log in to access this page.');
@@ -116,7 +133,8 @@
             <ul>
                 <li><a href="#" id="home-link">Home</a></li>
                 <li><a href="#" id="shop-link">Shop</a></li>
-                <li><a href="#" id="forum-link">Forum</a></li> <!-- Link to your login page -->
+                <li><a href="#" id="forum-link">Forum</a></li> 
+                <li><a href="#" id="profile-link">Name</a></li> 
             </ul>
         </nav>
     </header>
