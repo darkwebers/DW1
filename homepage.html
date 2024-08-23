@@ -194,48 +194,55 @@
         });
 
         window.onload = function() {
-            const postForm = document.getElementById('post-form');
-            const postsContainer = document.getElementById('posts-container');
+    const postForm = document.getElementById('post-form');
+    const postsContainer = document.getElementById('posts-container');
 
-            // Function to display posts
-            function displayPosts(snapshot) {
-                postsContainer.innerHTML = '';
-                snapshot.forEach(postSnapshot => {
-                    const post = postSnapshot.val();
-                    const postElement = document.createElement('div');
-                    postElement.className = 'forum-post';
-                    postElement.innerHTML = `
-                        <h3>${post.title}</h3>
-                        <p>${post.content}</p>
-                    `;
-                    postsContainer.appendChild(postElement);
-                });
-            }
+    // Function to display posts
+    function displayPosts(snapshot) {
+        postsContainer.innerHTML = '';
+        
+        snapshot.forEach(postSnapshot => {
+            const post = postSnapshot.val();
+            const postElement = document.createElement('div');
+            postElement.className = 'forum-post';
+            postElement.innerHTML = `
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                <p><strong>Posted by:</strong> ${post.name}</p> <!-- Added name display -->
+            `;
+            postsContainer.appendChild(postElement);
+        });
+    }
 
-            // Load posts
-            database.ref('posts').on('value', displayPosts);
+    // Load posts
+    database.ref('posts').on('value', displayPosts);
 
-            // Submit new post
-            postForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const title = document.getElementById('post-title').value;
-                const content = document.getElementById('post-content').value;
+    // Submit new post
+    postForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const title = document.getElementById('post-title').value;
+        const content = document.getElementById('post-content').value;
+        const userName = document.getElementById('user-name').value;
 
-                if (title && content) {
-                    database.ref('posts').push({
-                        title: title,
-                        content: content
-                    }).then(() => {
-                        document.getElementById('post-title').value = '';
-                        document.getElementById('post-content').value = '';
-                    }).catch(error => {
-                        console.error('Error posting message:', error);
-                    });
-                } else {
-                    alert('Please enter both title and content.');
-                }
+        if (title && content && userName) {
+            database.ref('posts').push({
+                title: title,
+                content: content,
+                name: userName
+            }).then(() => {
+                document.getElementById('post-title').value = '';
+                document.getElementById('post-content').value = '';
+                document.getElementById('user-name').value = '';
+            }).catch(error => {
+                console.error('Error posting message:', error);
             });
-        };
+        } else {
+            alert('Please enter a title, content, and your name.');
+        }
+    });
+};
+
     </script>
 </head>
 <body>
@@ -271,6 +278,7 @@
             <form id="post-form" class="post-form">
                 <input type="text" id="post-title" placeholder="Post Title" required>
                 <textarea id="post-content" rows="4" placeholder="Post Content" required></textarea>
+                <input type="text" id="user-name" placeholder="Your Name" required>
                 <button type="submit">Post</button>
             </form>
         </section>
