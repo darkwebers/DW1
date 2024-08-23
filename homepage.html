@@ -202,18 +202,18 @@
     // Function to display posts
            function displayPosts(snapshot) {
            postsContainer.innerHTML = '';
-    
-           snapshot.forEach(postSnapshot => {
-             const post = postSnapshot.val();
+        
+        snapshot.forEach(postSnapshot => {
+            const post = postSnapshot.val();
             const postElement = document.createElement('div');
             postElement.className = 'forum-post';
-             postElement.innerHTML = `
-             <h3>${post.title}</h3>
-             <p>${post.content.replace(/\n/g, '<br>')}</p> <!-- Replace new lines with <br> -->
-             <p><strong>Posted by:</strong> ${post.name}</p>
-              `;
-               postsContainer.appendChild(postElement);
-              });
+            postElement.innerHTML = `
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                <p><strong>Posted by:</strong> ${post.name}</p> <!-- Added name display -->
+            `;
+            postsContainer.appendChild(postElement);
+        });
          }
 
     }
