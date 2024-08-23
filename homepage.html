@@ -85,6 +85,19 @@
         #profile-link:hover {
             color: #000000;
         }
+        #logout-button {
+            margin-left: 20px;
+            padding: 5px 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #logout-button:hover {
+            background-color: darkred;
+        }
     </style>
     <!-- Подключаем Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
@@ -116,6 +129,8 @@
                 // Capitalize the first letter of the name and update the profile link
                 document.getElementById('profile-link').textContent = name.charAt(0).toUpperCase() + name.slice(1);
 
+                document.getElementById('logout-button').style.display = 'inline-block';
+
                 // Simulate clicking the home link
                 homeLink.click();
             } else {
@@ -135,6 +150,7 @@
                 <li><a href="#" id="shop-link">Shop</a></li>
                 <li><a href="#" id="forum-link">Forum</a></li> 
                 <li><a href="#" id="profile-link">---</a></li> 
+                <li><button id="logout-button" style="display:none;">Log Out</button></li>
             </ul>
         </nav>
     </header>
@@ -203,6 +219,15 @@
             shopSection.classList.add('active');
             homeSection.classList.remove('active');
             forumSection.classList.remove('active');
+        });
+
+        document.getElementById('logout-button').addEventListener('click', () => {
+            firebase.auth().signOut().then(() => {
+                console.log('User signed out.');
+                window.location.href = 'index.html'; // Redirect to login page after logout
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
         });
     </script>
 
