@@ -148,9 +148,6 @@
                 // Capitalize the first letter of the name and update the profile link
                 document.getElementById('profile-link').textContent = name.charAt(0).toUpperCase() + name.slice(1);
 
-                // Ensure the dropdown content is visible under the profile link
-                document.getElementById('profile-link').appendChild(document.querySelector('.dropdown-content'));
-
                 // Simulate clicking the home link
                 homeLink.click();
             } else {
