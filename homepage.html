@@ -82,6 +82,7 @@
             text-decoration: none;
             cursor: pointer;
             position: relative;
+            display: inline-block; /* Ensures dropdown is positioned relative to this */
         }
 
         #profile-link:hover {
@@ -95,6 +96,8 @@
             min-width: 160px;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             z-index: 1;
+            top: 100%; /* Position it directly below the profile-link */
+            left: 0;   /* Align it to the left edge of the profile-link */
         }
 
         .dropdown-content a, .dropdown-content button {
