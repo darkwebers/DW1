@@ -213,7 +213,7 @@
                 postElement.innerHTML = `
                 <h3>${post.title}</h3>
                 <p>${post.content}</p>
-                <p><strong>Posted by:</strong> ${post.name} <strong> At:</strong>${post.time}</p>
+                <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
                 `;
                 postsContainer.appendChild(postElement);
             });
@@ -230,13 +230,16 @@
         const content = document.getElementById('post-content').value;
         const userName = document.getElementById('user-name').textContent;
         const nowtime = new Date().toISOString();
+        const formattedDate = nowtime.toISOString().split('T')[0];
+        const formattedTime = nowtime.toTimeString().split(' ')[0];
+        const formattedDateTime = `${formattedDate} ${formattedTime}`;  // "YYYY-MM-DD HH:MM:SS"
 
         if (title && content && userName && nowtime) {
             database.ref('posts').push({
                 title: title,
                 content: content,
                 name: userName,
-                time: nowtime
+                time: formattedDateTime
             }).then(() => {
                 document.getElementById('post-title').value = '';
                 document.getElementById('post-content').value = '';
