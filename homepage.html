@@ -219,21 +219,21 @@
 
     // Function to display posts
            function displayPosts(snapshot) {
-                const postsContainer = document.getElementById('posts-container');
-                postsContainer.innerHTML = '';
+    const postsContainer = document.getElementById('posts-container');
+    postsContainer.innerHTML = '';
 
-                snapshot.forEach(postSnapshot => {
-                const post = postSnapshot.val();
-                const postElement = document.createElement('div');
-                postElement.className = 'forum-post';
-                postElement.innerHTML = 
-                <h3>${post.title}</h3>
-                <p>${post.content}</p>
-                <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
-                ;
-                postsContainer.appendChild(postElement);
-            });
-        }
+    snapshot.forEach(postSnapshot => {
+        const post = postSnapshot.val();
+        const postElement = document.createElement('div');
+        postElement.className = 'forum-post';
+        postElement.innerHTML = `
+            <h3>${post.title}</h3>
+            <p>${post.content}</p>
+            <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
+        `;
+        postsContainer.appendChild(postElement);
+    });
+}
 
     // Load posts
     database.ref('posts').on('value', displayPosts);
