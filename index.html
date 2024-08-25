@@ -67,6 +67,20 @@
         .toggle-link a:hover {
             text-decoration: underline;
         }
+        .footer-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+        }
+
+        .footer-logo img {
+           width: 50px;
+           height: auto;
+        }
+
     </style>
     <!-- Подключаем Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
@@ -110,6 +124,10 @@
             Already have an account? <a id="toggle-login">Login</a>
         </div>
     </form>
+</div>
+
+<div class="footer-logo">
+    <img src="firebase.svg" alt="Firebase Logo">
 </div>
 
 <script>
