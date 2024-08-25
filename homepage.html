@@ -287,7 +287,7 @@
 
                 // Check if the file is an image
                 if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension)) {
-                    fileDisplay = `<img src="${file.url}" alt="${file.name}" style="max-width: 100%; height: auto;"><br>`;
+                    fileDisplay = `<img src="${file.url}" alt="${file.name}" style="max-width: 300px; max-height: 300px; width: auto; height: auto;"><br>`;
                 }
 
                 fileDisplay += `<a href="${file.url}" download="${file.name}" class="btn-download">Download ${file.name}</a>`;
@@ -306,6 +306,7 @@
         oceanPostsContainer.appendChild(postElement);
     });
 }
+
 
 
     // Load ocean posts
