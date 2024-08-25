@@ -210,90 +210,107 @@
             }
         });
 
-        window.onload = function() {
+        window.addEventListener('load', function() {
             const postForm = document.getElementById('post-form');
             const postsContainer = document.getElementById('posts-container');
 
-    // Function to display posts
-           function displayPosts(snapshot) {
+            // Function to display posts
+            function displayPosts(snapshot) {
                 const postsContainer = document.getElementById('posts-container');
                 postsContainer.innerHTML = '';
 
                 snapshot.forEach(postSnapshot => {
-                const post = postSnapshot.val();
-                const postElement = document.createElement('div');
-                postElement.className = 'forum-post';
-                postElement.innerHTML = `
-                <h3>${post.title}</h3>
-                <p>${post.content}</p>
-                <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
-                `;
-                postsContainer.appendChild(postElement);
-            });
-        }
-
-    // Load posts
-    database.ref('posts').on('value', displayPosts);
-
-    // Submit new post
-    postForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        
-        const title = document.getElementById('post-title').value;
-        const content = document.getElementById('post-content').value;
-        const userName = document.getElementById('user-name').textContent;
-        const nowtime = new Date().toISOString();
-
-        if (title && content && userName && nowtime) {
-            database.ref('posts').push({
-                title: title,
-                content: content,
-                name: userName,
-                time: nowtime
-            }).then(() => {
-                document.getElementById('post-title').value = '';
-                document.getElementById('post-content').value = '';
-                document.getElementById('user-name').value = '';
-            }).catch(error => {
-                console.error('Error posting message:', error);
-            });
-        } else {
-            alert('Please enter a title and content');
-        }
-    });
-};
-        
-window.onload = function() {
-    const oceanPostForm = document.getElementById('ocean-post-form');
-    const oceanPostsContainer = document.getElementById('ocean-posts-container');
-
-    // Function to display posts
-    function displayOceanPosts(snapshot) {
-        oceanPostsContainer.innerHTML = '';
-        snapshot.forEach(postSnapshot => {
-            const post = postSnapshot.val();
-            const postElement = document.createElement('div');
-            postElement.className = 'forum-post';
-
-            let fileContent = '';
-            if (post.fileUrl) {
-                if (isImage(post.fileUrl)) {
-                    fileContent = `<img src="${post.fileUrl}" alt="Image" style="max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px;">`;
-                } else {
-                    fileContent = `<button onclick="downloadFile('${post.fileUrl}')">Download File</button>`;
-                }
+                    const post = postSnapshot.val();
+                    const postElement = document.createElement('div');
+                    postElement.className = 'forum-post';
+                    postElement.innerHTML = `
+                        <h3>${post.title}</h3>
+                        <p>${post.content}</p>
+                        <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
+                    `;
+                    postsContainer.appendChild(postElement);
+                });
             }
 
-            postElement.innerHTML = `
-                <h3>${post.title}</h3>
-                <p>${post.content}</p>
-                ${fileContent}
-                ${post.link ? `<p><a href="${post.link}" target="_blank">${post.link}</a></p>` : ''}
-                <p><strong>Shared by:</strong> ${post.name} <strong>At:</strong> ${post.time}</p>
-            `;
-            oceanPostsContainer.appendChild(postElement);
-        });
-    }
+            // Load posts
+            database.ref('posts').on('value', displayPosts);
+
+            // Submit new post
+            postForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const title = document.getElementById('post-title').value;
+                const content = document.getElementById('post-content').value;
+                const userName = document.getElementById('user-name').textContent;
+                const nowtime = new Date().toISOString();
+
+                if (title && content && userName && nowtime) {
+                    database.ref('posts').push({
+                        title: title,
+                        content: content,
+                        name: userName,
+                        time: nowtime
+                    }).then(() => {
+                        document.getElementById('post-title').value = '';
+                        document.getElementById('post-content').value = '';
+                    }).catch(error => {
+                        console.error('Error posting message:', error);
+                    });
+                } else {
+                    alert('Please enter a title and content');
+                }
+            });
+
+            const oceanPostForm = document.getElementById('ocean-post-form');
+            const oceanPostsContainer = document.getElementById('ocean-posts-container');
+
+            // Function to display posts
+            function displayOceanPosts(snapshot) {
+                oceanPostsContainer.innerHTML = '';
+                snapshot.forEach(postSnapshot => {
+                    const post = postSnapshot.val();
+                    const postElement = document.createElement('div');
+                    postElement.className = 'forum-post';
+                    postElement.innerHTML = `
+                        <h3>${post.title}</h3>
+                        <p>${post.content}</p>
+                        <p><strong>Posted by:</strong> ${post.name} <strong>At:</strong> ${post.time}</p>
+                    `;
+                    oceanPostsContainer.appendChild(postElement);
+                });
+            }
+
+            // Load ocean posts
+            database.ref('ocean-posts').on('value', displayOceanPosts);
+
+            // Submit new ocean post
+            oceanPostForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const title = document.getElementById('ocean-post-title').value;
+                const content = document.getElementById('ocean-post-content').value;
+                const userName = document.getElementById('user-name').textContent;
+                const nowtime = new Date().toISOString();
+
+                if (title && content && userName && nowtime) {
+                    database.ref('ocean-posts').push({
+                        title: title,
+                        content: content,
+                        name: userName,
+                        time: nowtime
+                    }).then(() => {
+                        document.getElementById('ocean-post-title').value = '';
+                        document.getElementById('ocean-post-content').value = '';
+                    }).catch(error => {
+                        console.error('Error posting message:', error);
+                    });
+                } else {
+                    alert('Please enter a title and content');
+                }
+            });
+
+        
+    
 
     // Function to check if a file is an image
     function isImage(fileUrl) {
