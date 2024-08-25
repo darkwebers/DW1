@@ -214,26 +214,26 @@
         });
 
         window.onload = function() {
-            const postForm = document.getElementById('post-form');
-            const postsContainer = document.getElementById('posts-container');
+    const postForm = document.getElementById('post-form');
+    const postsContainer = document.getElementById('posts-container');
 
     // Function to display posts
-           function displayPosts(snapshot) {
-    const postsContainer = document.getElementById('posts-container');
-    postsContainer.innerHTML = '';
+    function displayPosts(snapshot) {
+        const postsContainer = document.getElementById('posts-container');
+        postsContainer.innerHTML = '';
 
-    snapshot.forEach(postSnapshot => {
-        const post = postSnapshot.val();
-        const postElement = document.createElement('div');
-        postElement.className = 'forum-post';
-        postElement.innerHTML = `
-            <h3>${post.title}</h3>
-            <p>${post.content}</p>
-            <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
-        `;
-        postsContainer.appendChild(postElement);
-    });
-}
+        snapshot.forEach(postSnapshot => {
+            const post = postSnapshot.val();
+            const postElement = document.createElement('div');
+            postElement.className = 'forum-post';
+            postElement.innerHTML = `
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
+            `;
+            postsContainer.appendChild(postElement);
+        });
+    }
 
     // Load posts
     database.ref('posts').on('value', displayPosts);
@@ -264,7 +264,89 @@
             alert('Please enter a title and content');
         }
     });
+
+    // Ocean post handling
+    const oceanPostForm = document.getElementById('ocean-post-form');
+    const oceanPostsContainer = document.getElementById('ocean-posts-container');
+
+    // Function to display ocean posts
+    function displayOceanPosts(snapshot) {
+        const oceanPostsContainer = document.getElementById('ocean-posts-container');
+        oceanPostsContainer.innerHTML = '';
+
+        snapshot.forEach(postSnapshot => {
+            const post = postSnapshot.val();
+            const postElement = document.createElement('div');
+            postElement.className = 'forum-post';
+
+            let fileLinks = '';
+            if (post.files && post.files.length > 0) {
+                fileLinks = post.files.map(file => `
+                    <a href="${file.url}" download="${file.name}" class="btn-download">Download ${file.name}</a>
+                `).join('<br>');
+            }
+
+            postElement.innerHTML = `
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
+                ${fileLinks}
+                <p><a href="${post.link}" target="_blank">${post.link}</a></p>
+            `;
+
+            oceanPostsContainer.appendChild(postElement);
+        });
+    }
+
+    // Load ocean posts
+    database.ref('ocean_posts').on('value', displayOceanPosts);
+
+    // Submit new ocean post
+    oceanPostForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const title = document.getElementById('ocean-post-title').value;
+        const content = document.getElementById('ocean-post-content').value;
+        const link = document.getElementById('ocean-post-link').value;
+        const userName = document.getElementById('user-name').textContent;
+        const nowtime = new Date().toISOString();
+        const fileInput = document.getElementById('ocean-post-file');
+        const files = fileInput.files;
+
+        const filePromises = Array.from(files).map(file => {
+            const fileRef = storage.ref().child(`ocean_posts/${file.name}`);
+            return fileRef.put(file).then(snapshot => {
+                return snapshot.ref.getDownloadURL().then(url => ({
+                    name: file.name,
+                    url: url
+                }));
+            });
+        });
+
+        Promise.all(filePromises).then(fileUrls => {
+            const postData = {
+                title: title,
+                content: content,
+                name: userName,
+                time: nowtime,
+                link: link,
+                files: fileUrls
+            };
+
+            database.ref('ocean_posts').push(postData)
+                .then(() => {
+                    document.getElementById('ocean-post-title').value = '';
+                    document.getElementById('ocean-post-content').value = '';
+                    document.getElementById('ocean-post-link').value = '';
+                    fileInput.value = '';
+                })
+                .catch(error => {
+                    console.error('Error posting ocean content:', error);
+                });
+        });
+    });
 };
+
     </script>
 </head>
 <body>
