@@ -260,11 +260,13 @@
                 <li><a href="#" id="home-link">Home</a></li>
                 <li><a href="#" id="shop-link">Shop</a></li>
                 <li><a href="#" id="forum-link">Forum</a></li> 
+                <li><a href="#" id="wiki-link">Wiki</a></li>
                 <li><a href="https://forms.gle/sqJNnF2zrV6XQBqj6" id="Report-link" target="_blank" rel="noopener noreferrer" style="color: red;">Report</a></li>
                 <li id="profile-link">
-                    <span id="user-name">Name</span>
+                    <span id="user-name">---</span>
                     <div class="dropdown-content">
                         <button id="change-pass-button">Change Password</button>
+                        <button id="click-button">Click</button>
                         <button id="logout-button">Log Out</button>
                     </div>
                 </li>
@@ -288,6 +290,13 @@
                 <textarea id="post-content" rows="4" placeholder="Post Content" required></textarea>
                 <button type="submit">Post</button>
             </form>
+        </section>
+
+        <section id="wiki" class="hidden">
+            <h1>Welcome to DW1 Wiki</h1>
+            <p>Read about this place and other here!.</p>
+            <p> </p>
+            <p>What is DW1?.</p>
         </section>
 
         <!-- Shop Section -->
@@ -322,18 +331,29 @@
         const homeLink = document.getElementById('home-link');
         const shopLink = document.getElementById('shop-link');
         const forumLink = document.getElementById('forum-link');
+        const wikiLink = document.getElementById('wiki-link');
         const homeSection = document.getElementById('home');
         const shopSection = document.getElementById('shop');
+        const wikiSection = document.getElementById('wiki');
         const forumSection = document.getElementById('forum');
 
         homeLink.addEventListener('click', () => {
             homeSection.classList.add('active');
             shopSection.classList.remove('active');
             forumSection.classList.remove('active');
+            wikiSection.classList.remove('active');
         });
 
         forumLink.addEventListener('click', () => {
             forumSection.classList.add('active');
+            homeSection.classList.remove('active');
+            shopSection.classList.remove('active');
+            wikiSection.classList.remove('active');
+        });
+
+        wikiLink.addEventListener('click', () => {
+            wikiSection.classList.add('active');
+            forumSection.classList.remove('active');
             homeSection.classList.remove('active');
             shopSection.classList.remove('active');
         });
@@ -342,6 +362,7 @@
             shopSection.classList.add('active');
             homeSection.classList.remove('active');
             forumSection.classList.remove('active');
+            wikiSection.classList.remove('active');
         });
 
         document.getElementById('logout-button').addEventListener('click', () => {
@@ -351,6 +372,10 @@
             }).catch((error) => {
                 console.error('Error signing out:', error);
             });
+        });
+        
+        document.getElementById('click-button').addEventListener('click', () => {
+            alert("ClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClickClick");
         });
 
         document.getElementById('change-pass-button').addEventListener('click', () => {
