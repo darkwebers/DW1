@@ -264,7 +264,7 @@
 };
     </script>
     <script>
-    window.onload = function() {
+    window.addEventListener('load', function() {
         const oceanPostForm = document.getElementById('ocean-post-form');
         const oceanPostsContainer = document.getElementById('ocean-posts-container');
 
@@ -356,8 +356,9 @@
                 console.error('Error saving post:', error);
             });
         }
-    };
+    });
 </script>
+
 
 </head>
 <body>
