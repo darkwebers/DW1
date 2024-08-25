@@ -271,32 +271,42 @@
 
     // Function to display ocean posts
     function displayOceanPosts(snapshot) {
-        const oceanPostsContainer = document.getElementById('ocean-posts-container');
-        oceanPostsContainer.innerHTML = '';
+    const oceanPostsContainer = document.getElementById('ocean-posts-container');
+    oceanPostsContainer.innerHTML = '';
 
-        snapshot.forEach(postSnapshot => {
-            const post = postSnapshot.val();
-            const postElement = document.createElement('div');
-            postElement.className = 'forum-post';
+    snapshot.forEach(postSnapshot => {
+        const post = postSnapshot.val();
+        const postElement = document.createElement('div');
+        postElement.className = 'forum-post';
 
-            let fileLinks = '';
-            if (post.files && post.files.length > 0) {
-                fileLinks = post.files.map(file => `
-                    <a href="${file.url}" download="${file.name}" class="btn-download">Download ${file.name}</a>
-                `).join('<br>');
-            }
+        let fileLinks = '';
+        if (post.files && post.files.length > 0) {
+            fileLinks = post.files.map(file => {
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                let fileDisplay = '';
 
-            postElement.innerHTML = `
-                <h3>${post.title}</h3>
-                <p>${post.content}</p>
-                <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
-                ${fileLinks}
-                <p><a href="${post.link}" target="_blank">${post.link}</a></p>
-            `;
+                // Check if the file is an image
+                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension)) {
+                    fileDisplay = `<img src="${file.url}" alt="${file.name}" style="max-width: 100%; height: auto;"><br>`;
+                }
 
-            oceanPostsContainer.appendChild(postElement);
-        });
-    }
+                fileDisplay += `<a href="${file.url}" download="${file.name}" class="btn-download">Download ${file.name}</a>`;
+                return fileDisplay;
+            }).join('<br>');
+        }
+
+        postElement.innerHTML = `
+            <h3>${post.title}</h3>
+            <p>${post.content}</p>
+            <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
+            ${fileLinks}
+            <p><a href="${post.link}" target="_blank">${post.link}</a></p>
+        `;
+
+        oceanPostsContainer.appendChild(postElement);
+    });
+}
+
 
     // Load ocean posts
     database.ref('ocean_posts').on('value', displayOceanPosts);
