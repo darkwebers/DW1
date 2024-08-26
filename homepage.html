@@ -236,7 +236,7 @@
     }
 
     function loadMessages() {
-    const userName = document.getElementById('user-name').textContent;
+    const userName = firebase.auth().currentUser.email.split('@')[0];
     console.log(userName);
 
     database.ref(`messages/${userName}`).on('value', snapshot => {
