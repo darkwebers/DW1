@@ -237,6 +237,7 @@
 
     function loadMessages() {
     const userName = document.getElementById('user-name').textContent;
+    console.log(userName);
 
     database.ref(`messages/${userName}`).on('value', snapshot => {
         messagesContainer.innerHTML = '';
