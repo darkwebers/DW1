@@ -587,44 +587,38 @@
             }
         });
     </script>
-    <script>
+        <script>
+        // Direct Messaging Functionality
+        const messageForm = document.getElementById('message-form');
+        const messagesContainer = document.getElementById('messages-container');
 
-// Direct Messaging Functionality
-const messageForm = document.getElementById('message-form');
-const messagesContainer = document.getElementById('messages-container');
+        messageForm.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-messageForm.addEventListener('submit', function(event) {
-    event.preventDefault();
+            const recipient = document.getElementById('message-recipient').value;
+            const content = document.getElementById('message-content').value;
+            const sender = firebase.auth().currentUser.email.split('@')[0];
+            const nowtime = new Date().toISOString();
 
-    const recipient = document.getElementById('message-recipient').value.trim();
-    const content = document.getElementById('message-content').value.trim();
-    const sender = document.getElementById('user-name').textContent;
-    const timestamp = new Date().toISOString();
+            if (recipient && content) {
+                const messageData = {
+                    sender: sender,
+                    content: content,
+                    time: nowtime
+                };
 
-    if (recipient && content && sender) {
-        const messageData = {
-            sender: sender,
-            recipient: recipient,
-            content: content,
-            time: timestamp
-        };
-
-        // Save message to Firebase under the recipient's node
-        database.ref(`messages/${recipient}`).push(messageData)
-            .then(() => {
-                alert('Message sent successfully!');
-                document.getElementById('message-recipient').value = '';
-                document.getElementById('message-content').value = '';
-            })
-            .catch(error => {
-                console.error('Error sending message:', error);
-                alert('Failed to send message. Please try again.');
-            });
-    } else {
-        alert('Please enter both recipient and message content.');
-    }
-});
+                database.ref(`messages/${recipient}`).push(messageData)
+                    .then(() => {
+                        document.getElementById('message-recipient').value = '';
+                        document.getElementById('message-content').value = '';
+                    })
+                    .catch(error => {
+                        console.error('Error sending message:', error);
+                    });
+            } else {
+                alert('Please enter a recipient and message content.');
+            }
+        });
     </script>
-
 </body>
 </html>
