@@ -217,27 +217,6 @@
     const postForm = document.getElementById('post-form');
     const postsContainer = document.getElementById('posts-container');
 
-    function loadMessages() {
-    const userName = firebase.auth().currentUser.email.split('@')[0];
-    console.log(userName);
-
-    database.ref(`messages/${userName}`).on('value', snapshot => {
-        messagesContainer.innerHTML = '';
-
-        snapshot.forEach(messageSnapshot => {
-            const message = messageSnapshot.val();
-            const messageElement = document.createElement('div');
-            messageElement.className = 'forum-post';
-            messageElement.innerHTML = `
-                <p><strong>From:</strong> ${message.sender}</p>
-                <p>${message.content}</p>
-                <p><strong>At:</strong> ${message.time}</p>
-            `;
-            messagesContainer.appendChild(messageElement);
-        });
-    });
-}
-
     // Function to display posts
     function displayPosts(snapshot) {
         const postsContainer = document.getElementById('posts-container');
@@ -258,6 +237,27 @@
 
     // Load posts
     database.ref('posts').on('value', displayPosts);
+
+    function loadMessages() {
+    const userName = firebase.auth().currentUser.email.split('@')[0];
+    console.log(userName);
+
+    database.ref(`messages/${userName}`).on('value', snapshot => {
+        messagesContainer.innerHTML = '';
+
+        snapshot.forEach(messageSnapshot => {
+            const message = messageSnapshot.val();
+            const messageElement = document.createElement('div');
+            messageElement.className = 'forum-post';
+            messageElement.innerHTML = `
+                <p><strong>From:</strong> ${message.sender}</p>
+                <p>${message.content}</p>
+                <p><strong>At:</strong> ${message.time}</p>
+            `;
+            messagesContainer.appendChild(messageElement);
+        });
+    });
+}
 
     // Load Messages
     loadMessages();
