@@ -235,8 +235,31 @@
         });
     }
 
+    function loadMessages() {
+    const userName = document.getElementById('user-name').textContent;
+
+    database.ref(`messages/${userName}`).on('value', snapshot => {
+        messagesContainer.innerHTML = '';
+
+        snapshot.forEach(messageSnapshot => {
+            const message = messageSnapshot.val();
+            const messageElement = document.createElement('div');
+            messageElement.className = 'forum-post';
+            messageElement.innerHTML = `
+                <p><strong>From:</strong> ${message.sender}</p>
+                <p>${message.content}</p>
+                <p><strong>At:</strong> ${message.time}</p>
+            `;
+            messagesContainer.appendChild(messageElement);
+        });
+    });
+}
+
     // Load posts
     database.ref('posts').on('value', displayPosts);
+
+    // Load Messages
+    loadMessages();
 
     // Submit new post
     postForm.addEventListener('submit', function(event) {
@@ -600,33 +623,6 @@ messageForm.addEventListener('submit', function(event) {
         alert('Please enter both recipient and message content.');
     }
 });
-
-// Load received messages
-function loadMessages() {
-    const userName = document.getElementById('user-name').textContent;
-
-    database.ref(`messages/${userName}`).on('value', snapshot => {
-        messagesContainer.innerHTML = '';
-
-        snapshot.forEach(messageSnapshot => {
-            const message = messageSnapshot.val();
-            const messageElement = document.createElement('div');
-            messageElement.className = 'forum-post';
-            messageElement.innerHTML = `
-                <p><strong>From:</strong> ${message.sender}</p>
-                <p>${message.content}</p>
-                <p><strong>At:</strong> ${message.time}</p>
-            `;
-            messagesContainer.appendChild(messageElement);
-        });
-    });
-}
-
-// Load messages on page load
-window.onload = function() {
-    loadMessages();
-    // Other existing onload functionality
-};
     </script>
 
 </body>
