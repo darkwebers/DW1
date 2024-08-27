@@ -349,7 +349,7 @@
         const files = fileInput.files;
 
         const filePromises = Array.from(files).map(file => {
-            const fileRef = storage.ref().child(ocean_posts/${file.name});
+            const fileRef = storage.ref().child(`ocean_posts/${file.name}`);
             return fileRef.put(file).then(snapshot => {
                 return snapshot.ref.getDownloadURL().then(url => ({
                     name: file.name,
