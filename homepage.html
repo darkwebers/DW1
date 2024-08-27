@@ -593,6 +593,7 @@
                     .then(() => {
                         document.getElementById('message-recipient').value = '';
                         document.getElementById('message-content').value = '';
+                        alert("Message Success Sended!");
                     })
                     .catch(error => {
                         console.error('Error sending message:', error);
