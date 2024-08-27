@@ -194,6 +194,7 @@
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             console.log('User is logged in:', user.email);
+            loadMessages(user);
             const email = user.email;
             const name = email.substring(0, email.indexOf('@'));
             document.getElementById('user-name').textContent = name.charAt(0).toUpperCase() + name.slice(1);
@@ -204,6 +205,28 @@
             window.location.href = 'index.html';
         }
     });
+
+    function loadMessages(user) {
+        const userName = user.email.split('@')[0];
+        console.log(userName);
+
+        database.ref(`messages/${userName}`).on('value', snapshot => {
+            const messagesContainer = document.getElementById('messages-container');
+            messagesContainer.innerHTML = '';
+
+            snapshot.forEach(messageSnapshot => {
+                const message = messageSnapshot.val();
+                const messageElement = document.createElement('div');
+                messageElement.className = 'forum-post';
+                messageElement.innerHTML = `
+                    <p><strong>From:</strong> ${message.sender}</p>
+                    <p>${message.content}</p>
+                    <p><strong>At:</strong> ${message.time}</p>
+                `;
+                messagesContainer.appendChild(messageElement);
+            });
+        });
+    }
 
     window.onload = function() {
         const postForm = document.getElementById('post-form');
@@ -229,31 +252,6 @@
 
         // Load posts
         database.ref('posts').on('value', displayPosts);
-
-        function loadMessages() {
-            const userName = firebase.auth().currentUser.email.split('@')[0];
-            console.log(userName);
-
-            database.ref(`messages/${userName}`).on('value', snapshot => {
-                const messagesContainer = document.getElementById('messages-container');
-                messagesContainer.innerHTML = '';
-
-                snapshot.forEach(messageSnapshot => {
-                    const message = messageSnapshot.val();
-                    const messageElement = document.createElement('div');
-                    messageElement.className = 'forum-post';
-                    messageElement.innerHTML = `
-                        <p><strong>From:</strong> ${message.sender}</p>
-                        <p>${message.content}</p>
-                        <p><strong>At:</strong> ${message.time}</p>
-                    `;
-                    messagesContainer.appendChild(messageElement);
-                });
-            });
-        }
-
-        // Load Messages
-        loadMessages();
 
         // Submit new post
         postForm.addEventListener('submit', function(event) {
