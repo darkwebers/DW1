@@ -278,142 +278,51 @@
                     }).then(() => {
                         document.getElementById('post-title').value = '';
                         document.getElementById('post-content').value = '';
-                    }).catch((error) => {
-                        console.error('Error posting to database:', error);
+                    }).catch(error => {
+                        console.error('Error adding post:', error);
                     });
+                } else {
+                    alert('Please fill out all fields.');
                 }
             });
 
-            // Send Private Message
-            const sendMessageForm = document.getElementById('send-message-form');
-            sendMessageForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                
-                const recipient = document.getElementById('message-recipient').value;
-                const messageContent = document.getElementById('message-content').value;
-                const senderName = document.getElementById('user-name').textContent;
-                const nowtime = new Date().toISOString();
-                
-                if (recipient && messageContent) {
-                    const recipientMessagesRef = database.ref('messages').child(recipient);
-
-                    recipientMessagesRef.push({
-                        sender: senderName,
-                        content: messageContent,
-                        time: nowtime
-                    }).then(() => {
-                        document.getElementById('message-recipient').value = '';
-                        document.getElementById('message-content').value = '';
-                        alert('Message sent successfully!');
-                    }).catch((error) => {
-                        console.error('Error sending message:', error);
-                        alert('Failed to send message. Please try again.');
-                    });
-                }
-            });
-
-            // Upload Files
-            const oceanPostForm = document.getElementById('ocean-post-form');
-            const oceanPostFileInput = document.getElementById('ocean-post-file');
-            const oceanPostLinkInput = document.getElementById('ocean-post-link');
-            const uploadButton = document.getElementById('upload-button');
-
-            oceanPostForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                const file = oceanPostFileInput.files[0];
-                const link = oceanPostLinkInput.value;
-                const userName = document.getElementById('user-name').textContent;
-
-                if (file && link && userName) {
-                    const storageRef = storage.ref().child(`posts/${userName}/${file.name}`);
-                    const uploadTask = storageRef.put(file);
-
-                    uploadTask.on('state_changed', 
-                        function(snapshot) {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            console.log(`Upload is ${progress}% done`);
-                        }, 
-                        function(error) {
-                            console.error('Upload failed:', error);
-                            alert('File upload failed. Please try again.');
-                        }, 
-                        function() {
-                            uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                                database.ref('ocean-posts').push({
-                                    userName: userName,
-                                    fileUrl: downloadURL,
-                                    link: link,
-                                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                                }).then(() => {
-                                    document.getElementById('ocean-post-file').value = '';
-                                    document.getElementById('ocean-post-link').value = '';
-                                    alert('File uploaded and post created successfully!');
-                                }).catch((error) => {
-                                    console.error('Error creating ocean post:', error);
-                                    alert('Failed to create post. Please try again.');
-                                });
-                            });
-                        }
-                    );
-                }
-            });
-
-            // Report and Delete Functions
-            const reportLink = document.getElementById('Report-link');
-            const deleteLink = document.getElementById('Delete-link');
-
-            reportLink.addEventListener('click', function() {
-                const postTitle = prompt('Enter the title of the post to report:');
-                if (postTitle) {
-                    const postRef = database.ref('posts');
-                    postRef.orderByChild('title').equalTo(postTitle).once('value').then((snapshot) => {
-                        if (snapshot.exists()) {
-                            snapshot.forEach((childSnapshot) => {
-                                childSnapshot.ref.update({ reported: true });
-                                alert(`Post "${postTitle}" has been reported.`);
-                            });
-                        } else {
-                            alert(`Post "${postTitle}" not found.`);
-                        }
-                    });
-                }
-            });
-
-            deleteLink.addEventListener('click', function() {
-                const postTitle = prompt('Enter the title of the post to delete:');
-                if (postTitle) {
-                    const postRef = database.ref('posts');
-                    postRef.orderByChild('title').equalTo(postTitle).once('value').then((snapshot) => {
-                        if (snapshot.exists()) {
-                            snapshot.forEach((childSnapshot) => {
-                                childSnapshot.ref.remove();
-                                alert(`Post "${postTitle}" has been deleted.`);
-                            });
-                        } else {
-                            alert(`Post "${postTitle}" not found.`);
-                        }
-                    });
-                }
+            // Handle file upload
+            document.getElementById('upload-file').addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                const storageRef = storage.ref(`files/${file.name}`);
+                storageRef.put(file).then(() => {
+                    alert('File uploaded successfully.');
+                }).catch(error => {
+                    console.error('Error uploading file:', error);
+                });
             });
         };
+
+        // Function to redirect to Forum
+        function redirectToForum() {
+            window.location.href = 'forum.html';
+        }
+
+        // Function to redirect to Shop
+        function redirectToShop() {
+            window.location.href = 'shop.html';
+        }
     </script>
 </head>
 <body>
     <header>
         <nav>
             <ul>
-                <li><a id="home-link" href="javascript:void(0)" onclick="showSection('home')">Home</a></li>
-                <li><a id="shop-link" href="javascript:void(0)" onclick="showSection('shop')">Shop</a></li>
-                <li><a id="forum-link" href="javascript:void(0)" onclick="showSection('forum')">Forum</a></li>
-                <li><a id="messages-link" href="javascript:void(0)" onclick="showSection('messages')">Messages</a></li>
-                <li><a id="postOcean-link" href="javascript:void(0)" onclick="showSection('postOcean')">Post Ocean</a></li>
+                <li><a id="home-link" href="javascript:void(0)" onclick="homeLink.click()">Home</a></li>
+                <li><a id="forum-link" href="javascript:void(0)" onclick="redirectToForum()">Forum</a></li>
+                <li><a id="shop-link" href="javascript:void(0)" onclick="redirectToShop()">Shop</a></li>
                 <li>
-                    <a id="profile-link">
-                        Welcome, <span id="user-name"></span>
+                    <a id="profile-link" href="javascript:void(0)">
+                        <span id="user-name"></span> <span>&#9662;</span>
                         <div class="dropdown-content">
-                            <a id="Report-link" href="#">Report Post</a>
-                            <a id="Delete-link" href="#">Delete Post</a>
+                            <a href="javascript:void(0)" onclick="homeLink.click()">Home</a>
+                            <a href="forum.html">Forum</a>
+                            <a href="shop.html">Shop</a>
                             <button onclick="logout()">Logout</button>
                         </div>
                     </a>
@@ -421,88 +330,43 @@
             </ul>
         </nav>
     </header>
-    <main>
-        <section id="home" class="active">
-            <h1>Welcome to DW1!</h1>
-            <p>Explore our products, join the discussions, and more.</p>
-        </section>
 
-        <section id="shop" class="hidden">
-            <h2>Shop</h2>
-            <div class="product-grid">
-                <div class="product">
-                    <img src="product1.jpg" alt="Product 1">
-                    <h3>Product 1</h3>
-                    <p>$19.99</p>
-                </div>
-                <div class="product">
-                    <img src="product2.jpg" alt="Product 2">
-                    <h3>Product 2</h3>
-                    <p>$29.99</p>
-                </div>
-                <div class="product">
-                    <img src="product3.jpg" alt="Product 3">
-                    <h3>Product 3</h3>
-                    <p>$39.99</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="forum" class="hidden">
-            <h2>Forum</h2>
-            <div id="posts-container"></div>
-            <div class="post-form">
-                <h3>Create a new post</h3>
-                <form id="post-form">
-                    <input type="text" id="post-title" placeholder="Title" required>
-                    <textarea id="post-content" placeholder="Your post..." rows="4" required></textarea>
-                    <button type="submit">Post</button>
-                </form>
-            </div>
-        </section>
-
-        <section id="messages" class="hidden">
-            <h2>Messages</h2>
-            <div id="messages-container"></div>
-            <div class="post-form">
-                <h3>Send a private message</h3>
-                <form id="send-message-form">
-                    <input type="text" id="message-recipient" placeholder="Recipient" required>
-                    <textarea id="message-content" placeholder="Your message..." rows="4" required></textarea>
-                    <button type="submit">Send Message</button>
-                </form>
-            </div>
-        </section>
-
-        <section id="postOcean" class="hidden">
-            <h2>Post Ocean</h2>
-            <form id="ocean-post-form">
-                <h3>Upload your file</h3>
-                <input type="file" id="ocean-post-file" required>
-                <input type="text" id="ocean-post-link" placeholder="Add a link" required>
-                <button id="upload-button" type="submit">Upload</button>
-            </form>
-        </section>
+    <main id="home">
+        <h1>Welcome to DW1</h1>
+        <p>This is the homepage of DW1.</p>
+        <!-- Content for the homepage -->
     </main>
-    <footer>
-        <p>&copy; 2023 DW1. All rights reserved.</p>
-    </footer>
-    <script>
-        function showSection(sectionId) {
-            document.querySelectorAll('main section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById(sectionId).classList.remove('hidden');
-        }
 
-        function logout() {
-            firebase.auth().signOut().then(() => {
-                alert('Successfully logged out.');
-                window.location.href = 'index.html';
-            }).catch((error) => {
-                console.error('Error logging out:', error);
-            });
-        }
-    </script>
+    <main id="forum" class="hidden">
+        <h2>Forum</h2>
+        <div id="posts-container">
+            <!-- Forum posts will be dynamically added here -->
+        </div>
+        <div id="post-form-container">
+            <form id="post-form" class="post-form">
+                <input type="text" id="post-title" placeholder="Post Title" required>
+                <textarea id="post-content" rows="5" placeholder="Post Content" required></textarea>
+                <button type="submit">Post</button>
+            </form>
+        </div>
+    </main>
+
+    <main id="shop" class="hidden">
+        <h2>Shop</h2>
+        <div class="product-grid">
+            <!-- Example Product -->
+            <div class="product">
+                <img src="images/Blocked.jpg" alt="Product 1">
+                <h3>Product 1</h3>
+                <p>$10.00</p>
+                <button>Add to Cart</button>
+            </div>
+            <!-- More products here -->
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 DW1. All rights reserved.</p>
+    </footer>
 </body>
 </html>
