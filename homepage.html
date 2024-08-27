@@ -226,11 +226,11 @@
             const post = postSnapshot.val();
             const postElement = document.createElement('div');
             postElement.className = 'forum-post';
-            postElement.innerHTML = 
+            postElement.innerHTML = `
                 <h3>${post.title}</h3>
                 <p>${post.content}</p>
                 <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
-            ;
+            `;
             postsContainer.appendChild(postElement);
         });
     
@@ -249,11 +249,11 @@
             const message = messageSnapshot.val();
             const messageElement = document.createElement('div');
             messageElement.className = 'forum-post';
-            messageElement.innerHTML = 
+            messageElement.innerHTML = `
                 <p><strong>From:</strong> ${message.sender}</p>
                 <p>${message.content}</p>
                 <p><strong>At:</strong> ${message.time}</p>
-            ;
+            `;
             messagesContainer.appendChild(messageElement);
         });
     });
@@ -319,13 +319,13 @@
             }).join('<br>');
         }
 
-        postElement.innerHTML = 
+        postElement.innerHTML = `
             <h3>${post.title}</h3>
             <p>${post.content}</p>
             <p><strong>Posted by:</strong> ${post.name} <strong> At: </strong>${post.time}</p>
             ${fileLinks}
             <p><a href="${post.link}" target="_blank">${post.link}</a></p>
-        ;
+        `;
 
         oceanPostsContainer.appendChild(postElement);
     });
