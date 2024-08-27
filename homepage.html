@@ -597,6 +597,7 @@
                     })
                     .catch(error => {
                         console.error('Error sending message:', error);
+                        alert("Error Sending Message!", error);
                     });
             } else {
                 alert('Please enter a recipient and message content.');
