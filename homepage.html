@@ -230,31 +230,6 @@
         // Load posts
         database.ref('posts').on('value', displayPosts);
 
-        function loadMessages() {
-            const userName = firebase.auth().currentUser.email.split('@')[0];
-            console.log(userName);
-
-            database.ref(`messages/${userName}`).on('value', snapshot => {
-                const messagesContainer = document.getElementById('messages-container');
-                messagesContainer.innerHTML = '';
-
-                snapshot.forEach(messageSnapshot => {
-                    const message = messageSnapshot.val();
-                    const messageElement = document.createElement('div');
-                    messageElement.className = 'forum-post';
-                    messageElement.innerHTML = `
-                        <p><strong>From:</strong> ${message.sender}</p>
-                        <p>${message.content}</p>
-                        <p><strong>At:</strong> ${message.time}</p>
-                    `;
-                    messagesContainer.appendChild(messageElement);
-                });
-            });
-        }
-
-        // Load Messages
-        loadMessages();
-
         // Submit new post
         postForm.addEventListener('submit', function(event) {
             event.preventDefault();
@@ -475,6 +450,31 @@
     </footer>
 
     <script>
+        function loadMessages() {
+            const userName = firebase.auth().currentUser.email.split('@')[0];
+            console.log(userName);
+
+            database.ref(`messages/${userName}`).on('value', snapshot => {
+                const messagesContainer = document.getElementById('messages-container');
+                messagesContainer.innerHTML = '';
+
+                snapshot.forEach(messageSnapshot => {
+                    const message = messageSnapshot.val();
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'forum-post';
+                    messageElement.innerHTML = `
+                        <p><strong>From:</strong> ${message.sender}</p>
+                        <p>${message.content}</p>
+                        <p><strong>At:</strong> ${message.time}</p>
+                    `;
+                    messagesContainer.appendChild(messageElement);
+                });
+            });
+        }
+
+        // Load Messages
+        loadMessages();
+        
         // Navigation
         const homeLink = document.getElementById('home-link');
         const shopLink = document.getElementById('shop-link');
