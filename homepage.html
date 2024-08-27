@@ -242,7 +242,7 @@
     const userName = firebase.auth().currentUser.email.split('@')[0];
     console.log(userName);
 
-    database.ref(messages/${userName}).on('value', snapshot => {
+    database.ref(`messages/${userName}`).on('value', snapshot => {
         messagesContainer.innerHTML = '';
 
         snapshot.forEach(messageSnapshot => {
@@ -608,7 +608,7 @@
                     time: nowtime
                 };
 
-                database.ref(messages/${recipient}).push(messageData)
+                database.ref(`messages/${recipient}`).push(messageData)
                     .then(() => {
                         document.getElementById('message-recipient').value = '';
                         document.getElementById('message-content').value = '';
