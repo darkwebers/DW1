@@ -194,6 +194,7 @@
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             console.log('User is logged in:', user.email);
+            setUserOnlineStatus(user);
             loadMessages(user);
             const email = user.email;
             const name = email.substring(0, email.indexOf('@'));
@@ -205,6 +206,24 @@
             window.location.href = 'index.html';
         }
     });
+
+    function setUserOnlineStatus(user) {
+        const userName = user.email.split('@')[0];
+        const userStatusRef = database.ref(`onlineUsers/${userName}`);
+
+        // Track connection state
+        const connectedRef = database.ref('.info/connected');
+        connectedRef.on('value', (snapshot) => {
+            if (snapshot.val() === true) {
+                // User is online
+                userStatusRef.set(true);
+                userStatusRef.onDisconnect().remove(); // Automatically remove when user disconnects
+            } else {
+                // User is offline
+                userStatusRef.remove();
+            }
+        });
+    }
 
     function loadMessages(user) {
         const userName = user.email.split('@')[0];
@@ -218,12 +237,19 @@
                 const message = messageSnapshot.val();
                 const messageElement = document.createElement('div');
                 messageElement.className = 'forum-post';
-                messageElement.innerHTML = `
-                    <p><strong>From:</strong> ${message.sender}</p>
-                    <p>${message.content}</p>
-                    <p><strong>At:</strong> ${message.time}</p>
-                `;
-                messagesContainer.appendChild(messageElement);
+
+                // Check if the sender is online
+                database.ref(`onlineUsers/${message.sender}`).once('value').then(onlineSnapshot => {
+                    const isOnline = onlineSnapshot.val();
+                    const senderNameStyle = isOnline ? 'style="color: green;"' : '';
+
+                    messageElement.innerHTML = `
+                        <p><strong>From:</strong> <span ${senderNameStyle}>${message.sender}</span></p>
+                        <p>${message.content}</p>
+                        <p><strong>At:</strong> ${message.time}</p>
+                    `;
+                    messagesContainer.appendChild(messageElement);
+                });
             });
         });
     }
