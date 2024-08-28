@@ -255,30 +255,42 @@
         const userName = user.email.split('@')[0];
         console.log(userName);
 
+        const messagesContainer = document.getElementById('messages-container');
+        const messageStatus = document.querySelector('#messages > p');
+
+        // Listen for changes in the user's messages
         database.ref(`messages/${userName}`).on('value', snapshot => {
-            const messagesContainer = document.getElementById('messages-container');
-            messagesContainer.innerHTML = '';
+            messagesContainer.innerHTML = ''; // Clear existing messages
 
-            snapshot.forEach(messageSnapshot => {
-                const message = messageSnapshot.val();
-                const messageElement = document.createElement('div');
-                messageElement.className = 'forum-post';
+            if (snapshot.exists()) {
+                // If there are messages, update the status text
+                messageStatus.textContent = "Here is your message box:";
 
-                // Check if the sender is online
-                database.ref(`onlineUsers/${message.sender}`).once('value').then(onlineSnapshot => {
-                    const isOnline = onlineSnapshot.val();
-                    const senderNameStyle = isOnline ? 'style="color: green;"' : '';
+                snapshot.forEach(messageSnapshot => {
+                    const message = messageSnapshot.val();
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'forum-post';
 
-                    messageElement.innerHTML = `
-                        <p><strong>From:</strong> <span ${senderNameStyle}>${message.sender}</span></p>
-                        <p>${message.content}</p>
-                        <p><strong>At:</strong> ${message.time}</p>
-                    `;
-                    messagesContainer.appendChild(messageElement);
+                    // Check if the sender is online
+                    database.ref(`onlineUsers/${message.sender}`).once('value').then(onlineSnapshot => {
+                        const isOnline = onlineSnapshot.val();
+                        const senderNameStyle = isOnline ? 'style="color: green;"' : '';
+
+                        messageElement.innerHTML = `
+                            <p><strong>From:</strong> <span ${senderNameStyle}>${message.sender}</span></p>
+                            <p>${message.content}</p>
+                            <p><strong>At:</strong> ${message.time}</p>
+                        `;
+                        messagesContainer.appendChild(messageElement);
+                    });
                 });
-            });
+            } else {
+                // If there are no messages, update the status text
+                messageStatus.textContent = "You don't have any messages.";
+            }
         });
     }
+
 
     window.onload = function() {
         const postForm = document.getElementById('post-form');
@@ -461,6 +473,7 @@
 
         <section id="messages" class="hidden">
             <h1>Direct Messages</h1>
+            <p>Here is your message box:</p>
             <div id="messages-container"></div>
             <form id="message-form" class="post-form">
                 <input type="text" id="message-recipient" placeholder="Recipient (Username)" required>
