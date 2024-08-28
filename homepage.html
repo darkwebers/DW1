@@ -213,25 +213,24 @@
 
         // Track connection state
         const connectedRef = database.ref('.info/connected');
-    
-        // Use .once to set the online status the first time
-        connectedRef.once('value').then((snapshot) => {
-            if (snapshot.val() === true) {
-                userStatusRef.set(true); // Set the user as online once
-
-                // Listen for disconnection
-                userStatusRef.onDisconnect().remove(); // Automatically remove when user disconnects
-            }
-        });
-
-        // Listen for changes in connection status (after the initial set)
         connectedRef.on('value', (snapshot) => {
-            if (snapshot.val() !== true) {
+            if (snapshot.val() === true) {
+                // User is online
+                userStatusRef.set(true).then(() => {
+                    // Ensure the online status is removed when the user disconnects
+                    userStatusRef.onDisconnect().remove();
+                }).catch((error) => {
+                    console.error('Error setting online status:', error);
+                });
+            } else {
                 // User is offline
-                userStatusRef.remove();
+                userStatusRef.remove().catch((error) => {
+                    console.error('Error removing online status:', error);
+                });
             }
         });
     }
+
 
 
     function logOutUser(user) {
