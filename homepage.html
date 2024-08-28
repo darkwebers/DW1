@@ -225,6 +225,24 @@
         });
     }
 
+    function logOutUser(user) {
+        const userName = user.email.split('@')[0];
+        const userStatusRef = database.ref(`onlineUsers/${userName}`);
+
+        // Remove the user's online status from the database
+        userStatusRef.remove().then(() => {
+            // After removing the online status, sign the user out from Firebase Authentication
+            firebase.auth().signOut().then(() => {
+                console.log('User signed out successfully.');
+                window.location.href = 'index.html'; // Redirect to login page after logout
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
+        }).catch((error) => {
+            console.error('Error removing online status:', error);
+        });
+    }
+
     function loadMessages(user) {
         const userName = user.email.split('@')[0];
         console.log(userName);
@@ -569,12 +587,15 @@
         });
 
         document.getElementById('logout-button').addEventListener('click', () => {
-            firebase.auth().signOut().then(() => {
-                console.log('User signed out.');
-                window.location.href = 'index.html'; // Redirect to login page after logout
-            }).catch((error) => {
-                console.error('Error signing out:', error);
-            });
+            // Get the currently authenticated user
+            const user = firebase.auth().currentUser;
+
+            if (user) {
+                // First, call logOutUser to remove the user's online status
+                logOutUser(user);
+            } else {
+                console.log('No user is currently signed in.');
+            }
         });
         
         document.getElementById('click-button').addEventListener('click', () => {
