@@ -435,6 +435,7 @@
         <nav>
             <ul>
                 <li><a href="#" id="home-link">Home</a></li>
+                <li><a href="#" id="games-link">Games</a></li> 
                 <li><a href="#" id="shop-link">Shop</a></li>
                 <li><a href="#" id="forum-link">Forum</a></li> 
                 <li><a href="#" id="ocean-link" style="color: skyblue;">Ocean</a></li>
@@ -458,6 +459,25 @@
         <section id="home" class="hidden">
             <h1>Welcome to DW1</h1>
             <p>Basic good site with dark-theme.</p>
+        </section>
+
+        <section id="games" class="hidden">
+            <h1>Welcome to DW1 Games Cloud</h1>
+            <p>Search For Games Here.</p>
+            <p onclick="window.location.href='VEngine/index.html';" style="cursor: pointer;">
+                Minecraft v1.0.0
+            </p>
+            <p style="color: red;">THIS GAME LOAD SOOO LONG.</p>
+            <p>Controlls:</p>
+            <p>T - Camera controlls</p>
+            <p>W A S D - Movement</p>
+            <p>SPACE - Up</p>
+            <p>SHIFT - Down</p>
+            <p>1-9 - Select Block</p>
+            <p>Z - Noclip On/Off</p>
+            <p>LMB - Dig</p>
+            <p>RMB - Place</p>
+            <p> </p>
         </section>
 
         <section id="forum" class="hidden">
@@ -559,6 +579,8 @@
         const oceanSection = document.getElementById('ocean');
         const messagesLink = document.getElementById('messages-link');
         const messagesSection = document.getElementById('messages');
+        const gamesLink = document.getElementById('games-link');
+        const gamesSection = document.getElementById('games');
 
         homeLink.addEventListener('click', () => {
             homeSection.classList.add('active');
@@ -567,6 +589,17 @@
             oceanSection.classList.remove('active');
             wikiSection.classList.remove('active');
             messagesSection.classList.remove('active');
+            gamesSection.classList.remove('active');
+        });
+
+        gamesLink.addEventListener('click', () => {
+            gamesSection.classList.add('active');
+            shopSection.classList.remove('active');
+            forumSection.classList.remove('active');
+            oceanSection.classList.remove('active');
+            wikiSection.classList.remove('active');
+            messagesSection.classList.remove('active');
+            homeSection.classList.remove('active');
         });
 
         messagesLink.addEventListener('click', () => {
@@ -576,6 +609,7 @@
             forumSection.classList.remove('active');
             oceanSection.classList.remove('active');
             wikiSection.classList.remove('active');
+            gamesSection.classList.remove('active');
         });
 
         forumLink.addEventListener('click', () => {
@@ -585,6 +619,7 @@
             shopSection.classList.remove('active');
             wikiSection.classList.remove('active');
             messagesSection.classList.remove('active');
+            gamesSection.classList.remove('active');
         });
 
         wikiLink.addEventListener('click', () => {
@@ -594,6 +629,7 @@
             oceanSection.classList.remove('active');
             shopSection.classList.remove('active');
             messagesSection.classList.remove('active');
+            gamesSection.classList.remove('active');
         });
 
         shopLink.addEventListener('click', () => {
@@ -603,6 +639,7 @@
             wikiSection.classList.remove('active');
             oceanSection.classList.remove('active');
             messagesSection.classList.remove('active');
+            gamesSection.classList.remove('active');
         });
         
         oceanLink.addEventListener('click', () => {
@@ -612,6 +649,7 @@
             wikiSection.classList.remove('active');
             shopSection.classList.remove('active');
             messagesSection.classList.remove('active');
+            gamesSection.classList.remove('active');
         });
 
         document.getElementById('logout-button').addEventListener('click', () => {
